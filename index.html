@@ -71,11 +71,14 @@
     background: currentColor;
   }
 
+  /* Colour emoji ignore currentColor and the dark/light ink flip, and opacity
+     only mutes them — so this end row is left alone by paint(). */
   #ends {
     display: flex;
     justify-content: space-between;
     margin-top: 16px;
-    opacity: .8;
+    font-size: 40px;
+    line-height: 1;
   }
   #hint {
     margin-top: 22px;
@@ -91,7 +94,7 @@
 <div id="stage">
   <div id="ui">
     <input id="slider" type="range" min="0" max="4" step="1" value="2" aria-label="Your support">
-    <div id="ends"><span>no</span><span>yes</span></div>
+    <div id="ends"><span role="img" aria-label="no">🤨👀</span><span role="img" aria-label="yes">👍</span></div>
     <div id="hint">tap to hold it up</div>
   </div>
 </div>
