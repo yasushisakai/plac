@@ -126,6 +126,8 @@ function paint() {
   stage.style.color = dark ? '#fff' : '#000';
   stage.style.setProperty('--dim', dark ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)');
   document.body.style.background = c;
+  document.documentElement.style.background = c;  // Safari paints its bar/overscroll
+                                                  // canvas from the root background
   theme.setAttribute('content', c);         // stops browser chrome breaking the bleed
 }
 
