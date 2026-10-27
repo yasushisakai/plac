@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Placard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" id="theme" content="#fbc02d">
+<meta name="theme-color" id="theme" content="#2e7d32">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
@@ -16,7 +16,7 @@
     overscroll-behavior: none;
     touch-action: manipulation;   /* iOS Safari ignores user-scalable=no; without this,
                                      double-tap zoom fights the app's only gesture */
-    background: #fbc02d;
+    background: #2e7d32;
     font: 600 17px/1.3 system-ui, sans-serif;
     -webkit-user-select: none;
     user-select: none;
@@ -27,7 +27,7 @@
   #stage {
     position: fixed;
     inset: 0;
-    background: #fbc02d;
+    background: #2e7d32;
     transition: background-color .18s ease;
     color: #000;                  /* the "ink": flipped to white on the dark stops */
   }
@@ -71,15 +71,21 @@
     background: currentColor;
   }
 
-  /* Colour emoji ignore currentColor and the dark/light ink flip, and opacity
-     only mutes them — so this end row is left alone by paint(). */
-  #ends {
-    display: flex;
-    justify-content: space-between;
+  #levels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
     margin-top: 16px;
+    text-align: center;
+    font-size: 13px;
+  }
+  #levels .emoji {
+    display: block;
+    margin-bottom: 8px;
     font-size: 40px;
     line-height: 1;
   }
+  #levels small { display: block; margin-top: 4px; font-weight: 400; }
   #hint {
     margin-top: 22px;
     text-align: center;
@@ -93,15 +99,24 @@
 
 <div id="stage">
   <div id="ui">
-    <input id="slider" type="range" min="0" max="4" step="1" value="2" aria-label="Your support">
-    <div id="ends"><span role="img" aria-label="no">🤨👀</span><span role="img" aria-label="yes">👍</span></div>
+    <input id="slider" type="range" min="0" max="2" step="1" value="1" aria-label="Your feedback" aria-describedby="levels">
+    <div id="levels">
+      <div><span class="emoji" role="img" aria-label="unhappy">☹️</span>Try harder<small>Did too little</small></div>
+      <div><span class="emoji" role="img" aria-label="thumbs up">👍</span>Good job<small>Did the right amount</small></div>
+      <div><span class="emoji" role="img" aria-label="eyes">👀</span>Skeptical<small>Did too much / it's unrealistic</small></div>
+    </div>
     <div id="hint">tap to hold it up</div>
   </div>
 </div>
 
 <script>
-// Five stops, red (no) through yellow to green (yes) — the traffic-light scale.
-var STOPS = ['#d32f2f', '#f57c00', '#fbc02d', '#7cb342', '#2e7d32'];
+// Three levels: too little, the right amount, and too much / unrealistic.
+var STOPS = ['#fbc02d', '#2e7d32', '#d32f2f'];
+var LABELS = [
+  'Try harder: did too little',
+  'Good job: did the right amount',
+  "Skeptical: did too much / it's unrealistic"
+];
 
 var stage  = document.getElementById('stage');
 var slider = document.getElementById('slider');
@@ -121,6 +136,7 @@ function luminance(hex) {
 
 function paint() {
   var c = STOPS[slider.value];
+  slider.setAttribute('aria-valuetext', LABELS[slider.value]);
   var dark = luminance(c) < 0.179;          // WCAG white/black crossover
   stage.style.backgroundColor = c;
   stage.style.color = dark ? '#fff' : '#000';
